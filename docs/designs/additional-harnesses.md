@@ -29,7 +29,7 @@ Goals:
 - Preserve brainstorm, draft, review, human approval gates, and file artifacts.
 - Start fresh reviewers with enforceable read-only access where required.
 - Record installation, workflow, and isolation outcomes separately.
-- Reuse the shared fixtures tracked in #112 without waiting for a new framework.
+- Reuse existing scenarios and integration fixtures. Follow shared-test extraction in #112 without waiting for a new framework.
 
 Non-goals:
 
@@ -60,7 +60,9 @@ text rather than maintaining a second copy of its review rules.
    location, target artifact, required standards, and necessary source paths.
 4. The reviewer reads those resources and returns findings through the host's
    result mechanism. It does not receive the parent's conversation,
-   rationale, memory, or previous reviewer findings.
+   rationale, memory, or unrelated reviewer findings. Pass prior reports only
+   when explicitly required by the canonical stage and listed as inputs.
+   Stage 8, for example, requires Stage 5's `zoom_out_report.md`.
 5. The orchestrator waits for all expected completions, identifies failures,
    writes the reports, and stops at the existing human approval gates.
 
@@ -75,6 +77,22 @@ permissions to make installation or delegation succeed.
 A fresh conversation alone does not prove reviewer isolation. Host-injected
 instructions, memory, MCP access, and shared workspace files must be assessed
 separately. Context isolation is not filesystem or process isolation.
+Assess whether a reviewer can access unrelated reports through the shared
+filesystem. An instruction to avoid them does not establish enforced isolation.
+Record unknown native isolation as unverified, never as a passing result.
+
+### Human approval gates
+
+Preserve the gates defined in the canonical skills:
+
+- [Brainstorm](../../skills/egm_brainstorm/SKILL.md): confirm readiness before Goldfish dispatch, then approve the brief before handoff.
+- [Draft](../../skills/egm_draft/SKILL.md): confirm the intake and obtain approval to draft. Approve each section. Confirm the destination when none was supplied.
+- [Review](../../skills/egm_review/SKILL.md): select the preset when none was supplied. Preserve its required stage checkpoints and pause/resume choices.
+- [Resolve](../../skills/egm_resolve/SKILL.md): present proposed fixes and contested findings before applying edits approved by the user.
+
+Use plain chat when the host has no structured question tool. Wait for the
+human response wherever the selected workflow requires one. A noninteractive
+fixture's advance approval does not verify an interactive pause.
 
 ## Host adapter plans
 
@@ -132,6 +150,19 @@ checks pass. A passing Cursor local Agent run cannot establish Grok Bot support.
 Propose any required implementation separately after this assessment.
 
 ### Shared checks
+
+Reuse the prompts and assertions in the existing skill suites:
+[brainstorm scenarios](../../skills/egm_brainstorm/test_scenarios.yaml),
+[draft scenarios](../../skills/egm_draft/test_scenarios.yaml), and
+[review scenarios](../../skills/egm_review/test_scenarios.yaml).
+Use the marker probe and line-count workflow fixture in
+[`tests/integration/test_codex.py`](../../tests/integration/test_codex.py),
+plus the project-instruction and parent-marker probe in
+[`tests/integration/test_claude.py`](../../tests/integration/test_claude.py),
+as behavioral references. Their native trace readers are host-specific.
+Adapt evidence collection to each new host; do not reuse incompatible parsers.
+The common runner and results schema remain follow-up work in
+[#112](https://github.com/google/elephant-goldfish-model/issues/112).
 
 Offline checks must cover:
 
