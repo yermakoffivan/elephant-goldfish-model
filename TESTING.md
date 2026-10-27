@@ -32,6 +32,16 @@ dependencies. They validate YAML frontmatter schemas and relative link
 integrity, the portable plugin manifest, shared metadata consistency, and
 marketplace/component paths.
 
+The read-hook tests also require a POSIX `sh` on `PATH`. On Windows, use
+Git for Windows and run the tests from Git Bash, or add its `bin` directory
+(containing `sh.exe`) to `PATH` in the current PowerShell session. Create
+the environment with `python -m venv .venv`, then activate it with
+`.venv\Scripts\Activate.ps1` in PowerShell or `source .venv/Scripts/activate`
+in Git Bash. Install the test dependencies as described above.
+Shell scripts use LF line endings through `.gitattributes`, including when
+Git's `core.autocrlf` is enabled. CI runs this offline suite on Ubuntu and
+Windows; this does not establish native host workflow support.
+
 ```bash
 # Run all unit tests
 pytest tests/unit

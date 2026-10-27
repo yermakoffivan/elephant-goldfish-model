@@ -156,12 +156,12 @@ READ_HOOK = ".claude-plugin/hooks/allow_plugin_reads.sh"
 
 def run_read_hook(tool_name: str, tool_input: dict) -> str:
   result = subprocess.run(
-      [str(ROOT / READ_HOOK)],
+      ["sh", (ROOT / READ_HOOK).as_posix()],
       input=json.dumps({"tool_name": tool_name, "tool_input": tool_input}),
       capture_output=True,
       text=True,
       check=True,
-      env={**os.environ, "CLAUDE_PLUGIN_ROOT": str(ROOT)},
+      env={**os.environ, "CLAUDE_PLUGIN_ROOT": ROOT.as_posix()},
   )
   return result.stdout
 
@@ -198,7 +198,7 @@ def test_claude_read_hook_approves_plugin_folders_only(
     tool_name: str, tool_input: dict, allowed: bool
 ) -> None:
   """Only clean paths in the folders EGM reads skip the permission prompt."""
-  tool_input = {k: v.replace("{root}", str(ROOT)) for k, v in tool_input.items()}
+  tool_input = {k: v.replace("{root}", ROOT.as_posix()) for k, v in tool_input.items()}
   output = run_read_hook(tool_name, tool_input)
   assert ('"permissionDecision":"allow"' in output) is allowed
 
